@@ -28,4 +28,6 @@ def searchrhyme(word):
         print(word + " is not in the dictionary. Sorry!")
 
 if __name__ == "__main__":
-    print(searchrhyme('spire'))
+    print(searchrhyme('string'))
+    print(searchrhyme('illusion'))
+    print(searchrhyme('slandering'))
