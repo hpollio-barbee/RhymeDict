@@ -3,27 +3,29 @@ import nltk.corpus
 
 
 def findrhyme(phones):
-    for i in phones:
-        if phones[-i][-1] in '12':
-            return phones[-i:]
+    for i in range(len(phones)):
+        if len(phones[-i]) == 3:
+            if phones[-i][2] in '12':
+                return tuple(phones[-i:])
 
 entries = nltk.corpus.cmudict.entries()
 rhymedict = {}
-for word, pron in entries:
-    rhyme = (findrhyme(pron),)
+for (word, pron) in entries:
+    rhyme = findrhyme(pron)
     if rhyme in rhymedict:
-        rhymedict[rhyme].add(word)
+        rhymedict[rhyme].append(word)
     else:
-        rhymedict[rhyme] = {word}
+        rhymedict[rhyme] = [word]
 
 def searchrhyme(word):
-    if word in rhymedict.keys():
-        wrdrhyme = findrhyme(nltk.corpus.cmudict.dict[word])
-        rhymelist = rhymedict[wrdrhyme] - word
+    if word in nltk.corpus.cmudict.words():
+        phones = nltk.corpus.cmudict.dict()[word][0]
+        wrdrhyme = findrhyme(phones)
+        rhymelist = rhymedict[wrdrhyme]
         print(word + " rhymes with:\n")
-        print(str(i) for i in rhymelist)
+        print(rhymelist)
     else:
         print(word + " is not in the dictionary. Sorry!")
 
 if __name__ == "__main__":
-    searchrhyme('fire')
+    print(searchrhyme('spire'))
