@@ -46,7 +46,6 @@ def searchrhyme(word):
         wrdrhyme = findrhyme(phones)  # finds the rhyme in the phones
         rhymelist = rhymedict[wrdrhyme]  # creates a list of all the values at the rhymedict key that matches wrdrhyme
         print(word + " rhymes with:\n")
-        print(wrdrhyme)
         print(rhymelist)
         print("\n" + word + " subsequence rhymes with:\n")
         print(subseqrhyme(word))
@@ -55,6 +54,5 @@ def searchrhyme(word):
 
 
 if __name__ == "__main__":
-    print(searchrhyme('string'))
-    # print(searchrhyme('illusion'))
-    # print(searchrhyme('slandering'))
+    rhymequery = input("Please enter a word to rhyme: ")
+    print(searchrhyme(rhymequery))
