@@ -9,6 +9,7 @@ def findrhyme(phones):
 
 
 entries = nltk.corpus.cmudict.entries()
+vowels = {'AA', 'AE', 'AH', 'AO', 'AW', 'AY', 'EH', 'ER', 'EY', 'IH', 'IY', 'OW', 'OY', 'UH', 'UW'}
 rhymedict = {}
 for (wrd, pron) in entries:
     rhyme = findrhyme(pron)  # gets the rhyme of the word in an entry in the CMUdict
