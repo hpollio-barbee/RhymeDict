@@ -1,7 +1,6 @@
 import nltk
 import nltk.corpus
 
-
 def findrhyme(phones):
     for i in range(len(phones)):
         if len(phones[-i]) == 3:  # checks to see if the phone is 3 characters long (only vowels are 3 long)
@@ -19,19 +18,27 @@ for (wrd, pron) in entries:
         rhymedict[rhyme] = [wrd]  # adds a new key and initial value if the key doesn't exist
 
 
-def subseqrhyme(word):
-    phones = nltk.corpus.cmudict.dict()[word][0]
-    wrdrhyme = findrhyme(phones)
-    list(wrdrhyme)
-    subrhymes = tuple(wrdrhyme.append('S'))  # adds the [s] to the end of the rhyme
-    subrhymet = tuple(wrdrhyme.append('T'))  # adds the [t] to the end of the rhyme
-    subrhymez = tuple(wrdrhyme.append('Z'))  # adds the [z] to the end of the rhyme
-    subrhymed = tuple(wrdrhyme.append('D'))  # adds the [d] to the end of the rhyme
-    # adds all of the lists of subsequence rhymes together to form one giant list
-    rhymelist = rhymedict[subrhymes] + rhymedict[subrhymet] + rhymedict[subrhymez] + rhymedict[subrhymed]
-    print(word + " subsequence rhymes with:\n")
-    print(rhymelist)
+def converttohash(rhyme, X):  # makes it easier to create new entries for rhyme dictionary
+    rhyme = rhyme.copy()
+    rhyme.append(X)
+    rhyme = tuple(rhyme)
+    return rhyme
 
+def subseqrhyme(word):
+    if word in nltk.corpus.cmudict.words():
+        phones = nltk.corpus.cmudict.dict()[word][0]
+        wrdrhyme = list(findrhyme(phones))
+        subrhymes = converttohash(wrdrhyme, 'S')  # creates rhyme with S added to the end
+        subrhymet = converttohash(wrdrhyme, 'T')  # creates rhyme with T added to the end
+        subrhymez = converttohash(wrdrhyme, 'Z')  # creates rhyme with Z added to the end
+        subrhymed = converttohash(wrdrhyme, 'D')  # creates rhyme with D added to the end
+        entrylist = [subrhymes, subrhymet, subrhymez, subrhymed]
+        # adds all of the lists of subsequence rhymes together to form one giant list
+        rhymelist = []
+        for entry in entrylist:
+            if entry in rhymedict:
+                rhymelist.append(rhymedict[entry])
+        return rhymelist
 
 def searchrhyme(word):
     if word in nltk.corpus.cmudict.words():
@@ -39,13 +46,15 @@ def searchrhyme(word):
         wrdrhyme = findrhyme(phones)  # finds the rhyme in the phones
         rhymelist = rhymedict[wrdrhyme]  # creates a list of all the values at the rhymedict key that matches wrdrhyme
         print(word + " rhymes with:\n")
+        print(wrdrhyme)
         print(rhymelist)
-        subseqrhyme(word)
+        print("\n" + word + " subsequence rhymes with:\n")
+        print(subseqrhyme(word))
     else:
         print(word + " is not in the dictionary. Sorry!")
 
 
 if __name__ == "__main__":
     print(searchrhyme('string'))
-    print(searchrhyme('illusion'))
-    print(searchrhyme('slandering'))
+    # print(searchrhyme('illusion'))
+    # print(searchrhyme('slandering'))
