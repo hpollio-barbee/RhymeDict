@@ -1,6 +1,7 @@
 import nltk
 import nltk.corpus
 import itertools as it
+import ast
 
 # finds the part of the word that makes it "rhyme"
 def findrhyme(phones):
@@ -19,10 +20,13 @@ vowels1 = {'AA1', 'AE1', 'AH1', 'AO1', 'AW1', 'AY1', 'EH1', 'ER1', 'EY1', 'IH1',
 # all vowels with secondary stess  for featural rhymes
 vowels2 = {'AA2', 'AE2', 'AH2', 'AO2', 'AW2', 'AY2', 'EH2', 'ER2', 'EY2', 'IH2', 'IY2', 'OW2', 'OY2', 'UH2', 'UW2'}
 
+vowels = vowels0.union(vowels1, vowels2)
+
 # dictionary containing every consonant as a key with the entry being the two closest phones to the key
-ranking = {'B': ['P', 'D'], 'CH': ['SH', 'JH'], 'D': ['D','JH'], 'DH': ['TH', 'V'], 'F': ['V', 'TH'], 'G': ['K', 'D'],
-           'JH': ['ZH', 'CH'], 'K': ['G', 'T'], 'L': 'R', 'M': ['N', 'NG'], 'N': ['NG', 'M'], 'NG': ['N', 'NG'],
-           'P': ['B', 'T'], 'R': 'L', 'S': ['Z', 'T'], 'SH': ['ZH', 'CH'], 'T': ['D', 'CH'], 'TH': ['DH', 'F'],
+ranking = {'B': ['P', 'D'], 'CH': ['SH', 'JH'], 'D': ['T', 'JH'], 'DH': ['TH', 'V'],
+           'F': ['V', 'TH'], 'G': ['K', 'D'], 'JH': ['ZH', 'CH'], 'K': ['G', 'T'], 'L': ['R'],
+           'M': ['N', 'NG'], 'N': ['NG', 'M'], 'NG': ['N', 'M'], 'P': ['B', 'T'], 'R': ['L'],
+           'S': ['Z', 'T'], 'SH': ['ZH', 'CH'], 'T': ['D', 'CH'], 'TH': ['DH', 'F'],
            'V': ['F', 'DH'], 'Z': ['S', 'ZH'], 'ZH': ['JH', 'SH']}
 
 rhymedict = {}
@@ -62,26 +66,25 @@ def subseqrhyme(word):
 
 # class responsible for getting all featural rhymes from rhyme
 class FeatureRhyme:
-    def __init__(self, rnkng, rhm, rhmdict):
-        self.rnkng = rnkng  # field to bring in consonant feature ranking dict
-        self.rhm = rhm  # the original rhyme of the word
-        self.rhymes = [rhm]  # list that will have all of the featural rhyme keys
-        self.rhmdict = rhmdict
+    def __init__(self, rnkng , rhm, rhmdict):
+        self.rnkng = rnkng  # field to bring in consonant feature ranking dict; format: dictionary w/ list entries
+        self.rhm = rhm  # the original rhyme of the word; format: tuple
+        self.rhymes = list(rhm)  # list that will have all of the featural rhyme keys; format: list
+        self.rhmdict = rhmdict  # the entire rhyme dictionary
 
-    # being a bad little boy (this is def why everything is getting messed up)
+    # generates a dictionary with all the features in the
     def genfeaturerhymes(self):
         rhymesdict = {}
-        for i in range(0, len(self.rhm) - 1):
-            if self.rhm[i] not in vowels0 and self.rhm[i] not in vowels1 and self.rhm[i] not in vowels2:
-                rhymesdict[i] = self.rnkng[self.rhm[i]]  # adds the value of the rnkng dict if it's a consonant
-            else:
-                rhymesdict[i] = self.rhm[i]  # just adds the vowel string if it's a vowel
-        sortedrhymes = sorted(rhymesdict)  # sorts the keys (which should be numbered based on order in rhyme
         cartesianlist = []
-        for i in range(0, len(rhymesdict) - 1):
-            cartesianlist.append(sortedrhymes[i])
-        combinations = it.product(cartesianlist)  # every possible ordered combination
-        return list(combinations)
+        for i in range(0, len(self.rhm)):
+            if self.rhm[i] not in vowels:  # self.rhm[i] type: String
+                rhymesdict[i] = self.rnkng[self.rhm[i]]  # adds the value of the rnkng dict if it's a consonant
+                cartesianlist.append(rhymesdict[i])
+            else:
+                vowelpass = self.rhm[i].split(" ")  # creats a list out of the entire string for the phone
+                rhymesdict[i] = vowelpass  # just adds the vowel string if it's a vowel
+                cartesianlist.append(rhymesdict[i])
+        return list(it.product(*cartesianlist))
 
     def getrhymes(self, combinations):
         rhymelist = []
@@ -89,6 +92,7 @@ class FeatureRhyme:
             if entry in rhymedict:
                 rhymelist.append(rhymedict[entry])
         return rhymelist
+
 
 
 def searchrhyme(word):
@@ -103,7 +107,10 @@ def searchrhyme(word):
         print("\n" + word + " subsequence rhymes with:\n")
         print(subseqrhyme(word))
         print("\n" + word + " featural rhymes with:\n")
-        print(fr.getrhymes(allrhymes))
+        if len(fr.getrhymes(allrhymes)) == 0:
+            print(word + " has no featural rhymes")
+        else:
+            print(fr.getrhymes(allrhymes))
     else:
         print(word + " is not in the dictionary. Sorry!")
 
