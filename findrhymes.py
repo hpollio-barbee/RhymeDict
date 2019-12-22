@@ -62,20 +62,25 @@ def subseqrhyme(word):
 
 # class responsible for getting all featural rhymes from rhyme
 class FeatureRhyme:
-    def __init__(self, rnkng, rhm):
+    def __init__(self, rnkng, rhm, rhmdict):
         self.rnkng = rnkng  # field to bring in consonant feature ranking dict
         self.rhm = rhm  # the original rhyme of the word
         self.rhymes = [rhm]  # list that will have all of the featural rhyme keys
+        self.rhmdict = rhmdict
 
+    # being a bad little boy (this is def why everything is getting messed up)
     def genfeaturerhymes(self):
         rhymesdict = {}
-        for i in range(0, len(self.rhm)):
+        for i in range(0, len(self.rhm) - 1):
             if self.rhm[i] not in vowels0 and self.rhm[i] not in vowels1 and self.rhm[i] not in vowels2:
                 rhymesdict[i] = self.rnkng[self.rhm[i]]  # adds the value of the rnkng dict if it's a consonant
             else:
                 rhymesdict[i] = self.rhm[i]  # just adds the vowel string if it's a vowel
         sortedrhymes = sorted(rhymesdict)  # sorts the keys (which should be numbered based on order in rhyme
-        combinations = it.product(*(rhymesdict[Name] for Name in sortedrhymes))  # every possible ordered combination
+        cartesianlist = []
+        for i in range(0, len(rhymesdict) - 1):
+            cartesianlist.append(sortedrhymes[i])
+        combinations = it.product(cartesianlist)  # every possible ordered combination
         return list(combinations)
 
     def getrhymes(self, combinations):
@@ -91,7 +96,7 @@ def searchrhyme(word):
         phones = nltk.corpus.cmudict.dict()[word][0]  # gets the phones from the entry in the dictionary
         wrdrhyme = findrhyme(phones)  # finds the rhyme in the phones
         rhymelist = rhymedict[wrdrhyme]  # creates a list of all the values at the rhymedict key that matches wrdrhyme
-        fr = FeatureRhyme(ranking, wrdrhyme)
+        fr = FeatureRhyme(ranking, wrdrhyme, rhymedict)
         allrhymes = fr.genfeaturerhymes()
         print(word + " rhymes with:\n")
         print(rhymelist)
