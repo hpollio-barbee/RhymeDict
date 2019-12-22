@@ -11,7 +11,7 @@ This feature adds common inflectional phones to the ends of rhymes and searches 
 This feature takes the perfect rhyme of a word and changes some of the consonant phones based on how close the consonants are based on featural theory
 
 # Feature Rankings based on ARPABet (closest to phone is closest featurally)
-**Phones in parentheses are not included to save memory)
+**Phones in parentheses are not included in featural rhymes to save memory and make the featural rhymes more plausible
 
 - B \[b\]: P, D, (T, G, K)
 - CH \[tʃ\]: SH<->JH, (T, D, K, G )
@@ -38,3 +38,7 @@ This feature takes the perfect rhyme of a word and changes some of the consonant
 - Z \[z\]: S, ZH
 - ZH \[ʒ\]: JH, SH, (Z, DH, S)
 
+# What you need to run it
+All you need are the NLTK corpus module, through which you can use the cmudict, and itertools, which are needed for a specific part of the featural rhyme class
+
+# How to run it
