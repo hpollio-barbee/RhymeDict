@@ -1,5 +1,6 @@
 import nltk
 import nltk.corpus
+import itertools as it
 
 # finds the part of the word that makes it "rhyme"
 def findrhyme(phones):
@@ -40,6 +41,8 @@ def converttohash(rhyme, X):  # makes it easier to create new entries for rhyme 
     rhyme = tuple(rhyme)
     return rhyme
 
+
+# function to find subsequence rhymes
 def subseqrhyme(word):
     if word in nltk.corpus.cmudict.words():
         phones = nltk.corpus.cmudict.dict()[word][0]
@@ -60,14 +63,27 @@ def subseqrhyme(word):
 # class responsible for getting all featural rhymes from rhyme
 class FeatureRhyme:
     def __init__(self, rnkng, rhm):
-        self.ranking = rnkng
-        self.rhm = rhm
-        self.rhmconcount = len(rhm)
+        self.rnkng = rnkng  # field to bring in consonant feature ranking dict
+        self.rhm = rhm  # the original rhyme of the word
+        self.rhymes = [rhm]  # list that will have all of the featural rhyme keys
 
-    def findconsonant(self, rhm):
-        for phone in rhm:
-            if phone in vowels0 or phone in vowels1 or phone in vowels2:
-                self.rhmconcount -= 1
+    def genfeaturerhymes(self):
+        rhymesdict = {}
+        for i in range(0, len(self.rhm)):
+            if self.rhm[i] not in vowels0 and self.rhm[i] not in vowels1 and self.rhm[i] not in vowels2:
+                rhymesdict[i] = self.rnkng[self.rhm[i]]  # adds the value of the rnkng dict if it's a consonant
+            else:
+                rhymesdict[i] = self.rhm[i]  # just adds the vowel string if it's a vowel
+        sortedrhymes = sorted(rhymesdict)  # sorts the keys (which should be numbered based on order in rhyme
+        combinations = it.product(*(rhymesdict[Name] for Name in sortedrhymes))  # every possible ordered combination
+        return list(combinations)
+
+    def getrhymes(self, combinations):
+        rhymelist = []
+        for entry in combinations:
+            if entry in rhymedict:
+                rhymelist.append(rhymedict[entry])
+        return rhymelist
 
 
 def searchrhyme(word):
@@ -75,10 +91,14 @@ def searchrhyme(word):
         phones = nltk.corpus.cmudict.dict()[word][0]  # gets the phones from the entry in the dictionary
         wrdrhyme = findrhyme(phones)  # finds the rhyme in the phones
         rhymelist = rhymedict[wrdrhyme]  # creates a list of all the values at the rhymedict key that matches wrdrhyme
+        fr = FeatureRhyme(ranking, wrdrhyme)
+        allrhymes = fr.genfeaturerhymes()
         print(word + " rhymes with:\n")
         print(rhymelist)
         print("\n" + word + " subsequence rhymes with:\n")
         print(subseqrhyme(word))
+        print("\n" + word + " featural rhymes with:\n")
+        print(fr.getrhymes(allrhymes))
     else:
         print(word + " is not in the dictionary. Sorry!")
 
