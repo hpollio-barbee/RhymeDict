@@ -104,9 +104,9 @@ def searchrhyme(word):
         allrhymes = fr.genfeaturerhymes()
         print(word + " rhymes with:\n")
         print(rhymelist)
-        print("\n" + word + " subsequence rhymes with:\n")
+        print("\n" + word + " shares subsequence rhymes with:\n")
         print(subseqrhyme(word))
-        print("\n" + word + " featural rhymes with:\n")
+        print("\n" + word + " shares featural rhymes with:\n")
         if len(fr.getrhymes(allrhymes)) == 0:
             print(word + " has no featural rhymes")
         else:
@@ -116,5 +116,5 @@ def searchrhyme(word):
 
 
 if __name__ == "__main__":
-    rhymequery = input("Please enter a word to rhyme: ")
+    rhymequery = input("Enter a word to find others that rhyme with it: ")
     print(searchrhyme(rhymequery))
