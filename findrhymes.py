@@ -3,6 +3,7 @@ import nltk.corpus
 import itertools as it
 import ast
 
+
 # finds the part of the word that makes it "rhyme"
 def findrhyme(phones):
     for i in range(len(phones)):
@@ -92,7 +93,6 @@ class FeatureRhyme:
             if entry in rhymedict:
                 rhymelist.append(rhymedict[entry])
         return rhymelist
-
 
 
 def searchrhyme(word):
