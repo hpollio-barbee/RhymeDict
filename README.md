@@ -42,3 +42,4 @@ This feature takes the perfect rhyme of a word and changes some of the consonant
 All you need are the NLTK corpus module, through which you can use the cmudict, and itertools, which are needed for a specific part of the featural rhyme class
 
 # How to run it
+No special things are needed to run the code. It runs like any other program.
